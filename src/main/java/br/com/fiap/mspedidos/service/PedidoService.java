@@ -2,6 +2,7 @@ package br.com.fiap.mspedidos.service;
 
 import br.com.fiap.mspedidos.dto.ItemDoPedidoDTO;
 import br.com.fiap.mspedidos.dto.PedidoDTO;
+import br.com.fiap.mspedidos.dto.StatusDTO;
 import br.com.fiap.mspedidos.model.ItemDoPedido;
 import br.com.fiap.mspedidos.model.Pedido;
 import br.com.fiap.mspedidos.model.Status;
@@ -60,6 +61,29 @@ public class PedidoService {
             itens.add(itemDoPedido);
         }
         entity.setItens(itens);
+    }
+
+    @Transactional
+    public void aprovarPagamentoPedido(Long id){
+        Pedido pedido = repository.getByIdWithItems(id);
+        if(pedido == null){
+            throw new EntityNotFoundException("Recurso não encontrado");
+        }
+
+        pedido.setStatus(Status.PAGO);
+        repository.updateStatus(Status.PAGO, pedido);
+    }
+
+    @Transactional
+    public PedidoDTO updateStatus(Long id, StatusDTO statusDTO){
+        Pedido pedido = repository.getByIdWithItems(id);
+        if(pedido == null){
+            throw new EntityNotFoundException("Recurso não encontrado");
+        }
+
+        pedido.setStatus(statusDTO.getStatus());
+        repository.updateStatus(statusDTO.getStatus(), pedido);
+        return new PedidoDTO(pedido);
     }
 
 }

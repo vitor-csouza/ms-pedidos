@@ -1,6 +1,7 @@
 package br.com.fiap.mspedidos.controller;
 
 import br.com.fiap.mspedidos.dto.PedidoDTO;
+import br.com.fiap.mspedidos.dto.StatusDTO;
 import br.com.fiap.mspedidos.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,19 @@ public class PedidoController {
         dto = service.insert(dto);
         URI uri = uriBuilder.path("/pedidos/{id}").buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
+    }
+
+    @PutMapping("/{id}/pago")
+    public ResponseEntity<Void> aprovarPagamentoPedido(@PathVariable @NotNull Long id){
+        service.aprovarPagamentoPedido(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<PedidoDTO> updateStatus(@PathVariable Long id,
+                                                  @RequestBody StatusDTO statusDTO){
+        PedidoDTO dto = service.updateStatus(id, statusDTO);
+        return ResponseEntity.ok(dto);
     }
 
 
